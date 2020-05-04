@@ -12,7 +12,6 @@ import (
 	"github.com/anz-bank/sysl-go/config"
 	"github.com/anz-bank/sysl-go/core"
 	"github.com/anz-bank/sysl-go/handlerinitialiser"
-	tlog "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 )
@@ -80,8 +79,6 @@ func TestValidRequestResponse(t *testing.T) {
 	}))
 	defer server.Close()
 
-	logger, _ := tlog.NewNullLogger()
-
 	cb := Callbacks{
 		timeout: 1 * time.Second,
 	}
@@ -103,7 +100,7 @@ func TestValidRequestResponse(t *testing.T) {
 	serverError := make(chan error)
 
 	go func() {
-		err := core.Server(context.Background(), "test", nil, &handlerManager, logger, nil)
+		err := core.Server(context.Background(), "test", nil, &handlerManager, nil)
 		serverError <- err
 	}()
 

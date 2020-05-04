@@ -1,28 +1,25 @@
 package dbendpoints
 
 import (
-	"context"
 	"io/ioutil"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/anz-bank/sysl-go/common"
-	"github.com/sirupsen/logrus"
-	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/require"
 )
 
-func callHandler(target string, si ServiceInterface) (*httptest.ResponseRecorder, *test.Hook) {
+func callHandler(target string, si ServiceInterface) (*httptest.ResponseRecorder, *common.TestHook) {
 	cb := Callback{}
 
 	sh := NewServiceHandler(cb, &si)
+	ctx, hook := common.NewTestContextWithLoggerHook()
 
 	r := httptest.NewRequest("GET", target, nil)
 	w := httptest.NewRecorder()
 
 	r.Header.Set("Content-Type", "application/json; charset=utf-8")
-	logger, hook := test.NewNullLogger()
-	r = r.WithContext(common.LoggerToContext(context.Background(), logger, logrus.NewEntry(logger)))
+	r = r.WithContext(ctx)
 
 	sh.GetCompanyLocationListHandler(w, r)
 

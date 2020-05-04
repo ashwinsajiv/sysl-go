@@ -7,7 +7,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/require"
 )
 
@@ -49,8 +48,7 @@ func TestHttpError_WriteError(t *testing.T) {
 		},
 	}
 
-	logger, _ := test.NewNullLogger()
-	ctx := LoggerToContext(context.Background(), logger, logger.WithField("test", "test"))
+	ctx := context.Background()
 
 	for _, tt := range tests {
 		tt := tt

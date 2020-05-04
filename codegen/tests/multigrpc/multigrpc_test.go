@@ -11,7 +11,6 @@ import (
 	"github.com/anz-bank/sysl-go/config"
 	"github.com/anz-bank/sysl-go/core"
 	"github.com/anz-bank/sysl-go/handlerinitialiser"
-	tlog "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 )
@@ -82,8 +81,6 @@ func AppleStub(ctx context.Context, req *pb.AppleRequest, client wallet.AppleCli
 }
 
 func TestEndToEndValidRequestResponse(t *testing.T) {
-	logger, _ := tlog.NewNullLogger()
-
 	cb := Callbacks{
 		timeout: 1 * time.Second,
 	}
@@ -102,7 +99,7 @@ func TestEndToEndValidRequestResponse(t *testing.T) {
 
 	go func() {
 		err := core.Server(context.Background(), "test",
-			nil, &handlerManager, logger, nil)
+			nil, &handlerManager, nil)
 		serverError <- err
 	}()
 
