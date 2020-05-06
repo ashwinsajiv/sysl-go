@@ -9,6 +9,7 @@ import (
 	"github.com/sirupsen/logrus/hooks/test"
 
 	"github.com/anz-bank/pkg/log"
+	"github.com/anz-bank/sysl-go/common/internal"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -45,10 +46,19 @@ func NewTestCoreRequestContext() (*logrus.Logger, *test.Hook, context.Context) {
 func NewTestCoreRequestContextWithLogger(logger *logrus.Logger) context.Context {
 	ctx := context.WithValue(context.Background(), coreRequestContextKey{},
 		&coreRequestContext{
-			logger: logger,
-			entry:  logger.WithField("traceId", uuid.New().String()),
+			logger:          logger,
+			entry:           logger.WithField("traceId", uuid.New().String()),
+			IsDebugLogLevel: false,
 		})
 
+	return ctx
+}
+
+func NewTestCoreRequestContextWithLoggerDebugLevel() context.Context {
+	ctx := context.WithValue(context.Background(), internal.IsDebugLogLevelKey{},
+		&internal.IsDebugLogLevel{
+			Flag: false,
+		})
 	return ctx
 }
 

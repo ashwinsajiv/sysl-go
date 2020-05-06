@@ -16,8 +16,9 @@ func NewLoggingRoundTripper(name string, base http.RoundTripper) http.RoundTripp
 }
 
 type coreRequestContext struct {
-	logger *logrus.Logger
-	entry  *logrus.Entry
+	logger          *logrus.Logger
+	entry           *logrus.Entry
+	IsDebugLogLevel bool
 }
 
 type reqHeaderContext struct {
@@ -79,8 +80,7 @@ func CoreRequestContextMiddleware() func(next http.Handler) http.Handler {
 
 			ctx = internal.AddResponseBodyMonitorToContext(ctx)
 			defer internal.CheckForUnclosedResponses(ctx)
-
-			reqLogger, entry := internal.NewRequestLogger(ctx, r)
+			reqLogger, entry := internal.NewRequestLogger(ctx, r, getCoreContext(ctx).IsDebugLogLevel)
 			w = reqLogger.ResponseWriter(w)
 			defer reqLogger.FlushLog()
 

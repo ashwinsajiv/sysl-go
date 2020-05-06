@@ -16,7 +16,7 @@ func TestNopLogger_FlushLog(t *testing.T) {
 	req, err := http.NewRequest("GET", "http://example.com/foo", nil)
 	require.NoError(t, err)
 
-	l, _ := NewRequestLogger(ctx, req)
+	l, _ := NewRequestLogger(ctx, req, true)
 
 	resp := http.Response{
 		Status:           "",
@@ -52,7 +52,7 @@ func TestLogger_FlushLog(t *testing.T) {
 	req, err := http.NewRequest("GET", "http://example.com/foo", nil)
 	require.NoError(t, err)
 
-	l, _ := NewRequestLogger(ctx, req)
+	l, _ := NewRequestLogger(ctx, req, true)
 
 	resp := http.Response{
 		Status:           "",
@@ -88,7 +88,7 @@ func TestRequestLogger_NilBody(t *testing.T) {
 	require.NoError(t, err)
 
 	require.NotPanics(t, func() {
-		NewRequestLogger(ctx, req)
+		NewRequestLogger(ctx, req, true)
 	})
 }
 
@@ -98,7 +98,7 @@ func TestRequestLogger_ResponseWriter(t *testing.T) {
 	req, err := http.NewRequest("GET", "http://example.com/foo", nil)
 	require.NoError(t, err)
 
-	l, _ := NewRequestLogger(ctx, req)
+	l, _ := NewRequestLogger(ctx, req, true)
 	rw := l.ResponseWriter(httptest.NewRecorder())
 
 	_, _ = rw.Write([]byte("hello"))

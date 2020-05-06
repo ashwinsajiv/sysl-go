@@ -24,12 +24,18 @@ type httpData struct {
 }
 
 type requestLogger struct {
-	ctx        context.Context
-	req        httpData
-	resp       httpData
-	protoMajor int
-	rw         http.ResponseWriter
-	flushed    bool
+	ctx             context.Context
+	req             httpData
+	resp            httpData
+	protoMajor      int
+	rw              http.ResponseWriter
+	flushed         bool
+	IsDebugLogLevel bool
+}
+
+type IsDebugLogLevelKey struct{}
+type IsDebugLogLevel struct {
+	Flag bool
 }
 
 func (r *requestLogger) LogResponse(resp *http.Response) {
@@ -58,9 +64,9 @@ func (r *requestLogger) FlushLog() {
 		return
 	}
 	r.flushed = true
-	// if r.rw != nil {
-	// 	r.resp.header = r.rw.Header()
-	// }
+	if r.rw != nil {
+		r.resp.header = r.rw.Header()
+	}
 
 	fields := log.With("logger", "common/internal/requestlogger.go").With("func", "FlushLog()")
 
@@ -76,9 +82,8 @@ func (r *nopLogger) LogResponse(_ *http.Response)                               
 func (r *nopLogger) ResponseWriter(base http.ResponseWriter) http.ResponseWriter { return base }
 func (r *nopLogger) FlushLog()                                                   {}
 
-func NewRequestLogger(ctx context.Context, req *http.Request) (RequestLogger, context.Context) {
+func NewRequestLogger(ctx context.Context, req *http.Request, isDebug bool) (RequestLogger, context.Context) {
 	//nolint: // TODO: store debug logging flag against context (outside of logger): Context#withValue
-	isDebug := true
 	if isDebug {
 		l := &requestLogger{
 			ctx:        InitFieldsFromRequest(req).Onto(ctx),

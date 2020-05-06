@@ -22,7 +22,7 @@ func (t *loggingRoundtripper) RoundTrip(req *http.Request) (*http.Response, erro
 	start := time.Now()
 
 	var resp *http.Response
-	reqLogger, _ := NewRequestLogger(t.ctx, req)
+	reqLogger, _ := NewRequestLogger(t.ctx, req, true)
 	defer func() {
 		reqLogger.LogResponse(resp)
 	}()
